@@ -1,11 +1,18 @@
-#include <stdlib.h>
 #include "graphs.h"
 
 /**
- * graph_create - allocates zeroed graph_t
- * Return: pointer to zeroed graph_t on the heap, or NULL on failure
+ * graph_create - allocates memory to store a graph_t structure, and
+ * initializes its content
+ * Return:  pointer to struct
  */
 graph_t *graph_create(void)
 {
-	return (calloc(1, sizeof(graph_t)));
+	graph_t *graph;
+
+	graph = malloc(sizeof(graph_t));
+	if (graph == NULL)
+		return (NULL);
+	graph->nb_vertices = 0;
+	graph->vertices = NULL;
+	return (graph);
 }
