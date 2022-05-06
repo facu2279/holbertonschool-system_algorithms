@@ -1,45 +1,78 @@
 #include "rb_trees.h"
+
+static size_t max_black;
+
 /**
- * check_tree - checks if a binary tree is a valid Red-Black Tree
- * @tree: pointer to the tree
- * Return: 1 if tree is a valid Red-Black Tree, and 0 otherwise
+ * key_fail - checks if valid binary search tree
+ * @cur: pointer to current tree node
+ *
+ * Return: 1 if invalid binary search tree, otherwise 0
  */
-int check_tree(const rb_tree_t *tree)
+int key_fail(const rb_tree_t *cur)
 {
-
-	if (!tree->left && !tree->right)
+	if ((cur->left && cur->left->n > cur->n) ||
+			(cur->right && cur->right->n < cur->n))
 		return (1);
-
-	if (!tree->color)
-		return (0);
-
-	if (tree->color == RED)
-	{
-		if (tree->parent->color == tree->color)
-			return (0);
-		if (tree->color == tree->left->color || tree->color == tree->right->color)
-			return (0);
-	}
-
-	if (tree->left && !tree->right)
-		return (0);
-	if (!tree->left && tree->right)
-		return (0);
-
-	return (check_tree(tree->right) && check_tree(tree->left));
+	return (0);
 }
+
 /**
- * rb_tree_is_valid - checks if a binary tree is a valid Red-Black Tree
- * @tree: pointer to the tree
- * Return: 1 if tree is a valid Red-Black Tree, and 0 otherwise
+ * colour_fail - checks if red-black tree colour properties are valid
+ * @cur: pointer to current tree node
+ *
+ * Return: 1 if invalid colour properties, otherwise 0
+ */
+int colour_fail(const rb_tree_t *cur)
+{
+	if (cur->color != RED && cur->color != BLACK)
+		return (1);
+	if (cur->color == RED &&
+			((cur->parent && cur->parent->color == RED) ||
+			 (cur->left && cur->left->color == RED) ||
+			 (cur->right && cur->right->color == RED)))
+		return (1);
+	return (0);
+}
+
+/**
+ * check_rb_tree - recursively checks if red-black tree is valid
+ * @tree: pointer to tree node
+ * @black_count: count of black nodes
+ *
+ * Return: 1 if valid, otherwise 0
+ */
+int check_rb_tree(const rb_tree_t *tree, size_t black_count)
+{
+	if (!tree)
+	{
+		if (!max_black)
+			max_black = black_count;
+		return (1);
+	}
+	if (colour_fail(tree) || key_fail(tree))
+		return (0);
+	if (tree->color == BLACK)
+		++black_count;
+	if (!check_rb_tree(tree->left, black_count) ||
+			!check_rb_tree(tree->right, black_count))
+		return (0);
+	if ((!tree->left || !tree->right) && black_count != max_black)
+		return (0);
+	return (1);
+}
+
+/**
+ * rb_tree_is_valid - checks if binary tree is valid red-black tree
+ * @tree: pointer to root node of tree being checked
+ *
+ * Return: 1 if valid, otherwise 0
  */
 int rb_tree_is_valid(const rb_tree_t *tree)
 {
-	if (!tree)
-		return (0);
+	size_t black_count;
 
-	if (tree->color != BLACK)
+	if (!tree || tree->color != BLACK)
 		return (0);
-
-	return (check_tree(tree->right) && check_tree(tree->left));
+	black_count = max_black = 0;
+	return (check_rb_tree(tree, black_count));
 }

@@ -21,8 +21,8 @@ int main(void)
 		return (EXIT_FAILURE);
 	}
 	printf("Node(%p): data(%d) left(%p) right(%p) parent(%p)\n",
-		(void *)node, *((int *)node->data), (void *)node->left,
-		(void *)node->right, (void *)node->parent);
+	       (void *)node, *((int *)node->data), (void *)node->left,
+	       (void *)node->right, (void *)node->parent);
 
 	node->left = binary_tree_node(node, &n2);
 	if (node == NULL)
@@ -31,8 +31,8 @@ int main(void)
 		return (EXIT_FAILURE);
 	}
 	printf("Node(%p): data(%d) left(%p) right(%p) parent(%p)\n",
-		(void *)node->left, *((int *)node->left->data), (void *)node->left->left,
-		(void *)node->left->right, (void *)node->left->parent);
+	       (void *)node->left, *((int *)node->left->data), (void *)node->left->left,
+	       (void *)node->left->right, (void *)node->left->parent);
 
 	return (EXIT_SUCCESS);
 }

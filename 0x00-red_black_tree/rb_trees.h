@@ -1,17 +1,27 @@
-#ifndef TREE_H
-#define TREE_H
+#ifndef RB_TREES_H
+#define RB_TREES_H
 
-
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
+#define GET_NODE(node, n)						\
+	do {								\
+		while (node && node->n != n)				\
+			node = n < node->n ? node->left : node->right;	\
+	} while (0)
+
+#define GET_MIN(node)				\
+	do {					\
+		while (node->left)		\
+			node = node->left;	\
+	} while (0)
 
 /**
  * enum rb_color_e - Possible color of a Red-Black tree
  *
  * @RED: 0 -> Red node
  * @BLACK: 1 -> Black node
- * @DOUBLE_BLACK: s
+ * @DOUBLE_BLACK: Double-black node (used for deletion)
  */
 typedef enum rb_color_e
 {
@@ -38,15 +48,13 @@ typedef struct rb_tree_s
 	struct rb_tree_s *right;
 } rb_tree_t;
 
-
-
+void rb_tree_print(const rb_tree_t *tree);
 rb_tree_t *rb_tree_node(rb_tree_t *parent, int value, rb_color_t color);
 int rb_tree_is_valid(const rb_tree_t *tree);
-int check_tree(const rb_tree_t *tree);
-
-rb_tree_t *fix_right(rb_tree_t *old, int value, rb_color_t  color);
-rb_tree_t *fix_left(rb_tree_t *old, int value, rb_color_t  color);
 rb_tree_t *rb_tree_insert(rb_tree_t **tree, int value);
 rb_tree_t *array_to_rb_tree(int *array, size_t size);
+rb_tree_t *rb_tree_remove(rb_tree_t *root, int n);
+void rotate_left(rb_tree_t **tree, rb_tree_t *node);
+void rotate_right(rb_tree_t **tree, rb_tree_t *node);
 
-#endif /* TREE_H */
+#endif /* RB_TREES_H */
